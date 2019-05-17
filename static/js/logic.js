@@ -1,7 +1,7 @@
 // Creating map object
 var map = L.map("map", {
   center: [40, -99],
-  zoom: 4.3
+  zoom: 4.5
 });
 
 // Adding tile layer
@@ -14,12 +14,12 @@ L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 
 // Function that will determine the color of a earthquake location based on the magnitude it belongs to
 function chooseColor(mag) {
-  if (mag > 5) {return "#f44242"}
-  else if (mag > 4) {return "#f49241"}
-  else if (mag > 3) {return "#f4ee41"}
-  else if (mag > 2) {return "#4141f4"}
-  else if (mag > 1) {return "#f441e2"}
-  else {return "#73f441"}
+  if (mag > 5) {return "red"}
+  else if (mag > 4) {return "orange"}
+  else if (mag > 3) {return "yellow"}
+  else if (mag > 2) {return "green"}
+  else if (mag > 1) {return "blue"}
+  else {return "purple"}
 }
 
 var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
@@ -32,7 +32,8 @@ d3.json(link).then(function(data) {
         return {
           fillColor: chooseColor(feature.properties.mag),
           fillOpacity: 0.5,
-          weight: 0.5
+          weight: 0.5,
+          radius: feature.properties.mag*8
         };
       },
 // Create a circle symbol to use with a GeoJSON layer instead of the default blue marker
@@ -65,4 +66,21 @@ d3.json(link).then(function(data) {
     }).addTo(map);
   });
 
-  
+//Legend
+var legend = L.control({position: 'bottomright'});
+legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend'),
+        mag = [0,1,2,3,4,5],
+        labels = [];
+
+    div.innerHTML += "<h4 style='margin:4px'>MAGNITUDE</h4>"
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < mag.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + chooseColor(mag[i] + 1) + '"></i> ' +
+            mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>' : '+');
+    }
+    return div;
+};
+legend.addTo(map);
