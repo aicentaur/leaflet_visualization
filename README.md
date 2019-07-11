@@ -29,4 +29,4 @@ The purpose of this project is to create a basic map using Leaflet that plots al
 
 ## Installation
 
-Clone this repository on your local machine and double click on `index.html` file to see the visualization.
+Clone this repository to your local machine and double click on `index.html` file to see the visualization.
